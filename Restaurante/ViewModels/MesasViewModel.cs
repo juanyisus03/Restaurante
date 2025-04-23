@@ -19,7 +19,7 @@ namespace Restaurante.ViewModels
         public ICommand MesaTappedCommand { get; }
 
         private bool _isEditionMode;
-        
+
         public bool isEditionMode
         {
             get => _isEditionMode;
@@ -57,7 +57,7 @@ namespace Restaurante.ViewModels
 
             _isEditionMode = false;
             MesaTappedCommand = new Command<(int fila, int columna, Image img)>(ManejarClickCelda);
-            
+
         }
 
         public OpcionMesa? OpcionSeleccionada
@@ -70,15 +70,16 @@ namespace Restaurante.ViewModels
             }
         }
 
-   
+
 
         private async void ManejarClickCelda((int fila, int columna, Image img) args)
         {
-            
+
 
             if (OpcionSeleccionada == null) return;
 
-            if (isEditionMode) {
+            if (isEditionMode)
+            {
                 cambiarUI(args);
             }
             else
@@ -88,7 +89,7 @@ namespace Restaurante.ViewModels
                     await App.Current.MainPage.DisplayAlert("Probando", "Esto es una prueba de que funciona mas o menos bien", "Estoy cansado jefe");
                 }
             }
-            
+
         }
 
         private void cambiarUI((int fila, int columna, Image img) args)
@@ -104,7 +105,7 @@ namespace Restaurante.ViewModels
             }
             else
             {
-                var mesa = new Mesa(numero: _mapaMesas.Count + 1, imagen: OpcionSeleccionada.Imagen);
+                var mesa = new Mesa(numero: fila * 5 + columna, fila:fila, columna:columna, imagen: OpcionSeleccionada.Imagen);
                 _mapaMesas[(fila, columna)] = mesa;
                 imagenControl.Source = mesa.Imagen;
             }

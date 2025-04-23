@@ -1,4 +1,5 @@
 ﻿using Restaurante.Models;
+using Restaurante.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,17 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Restaurante.ViewModels
 {
    public class CRUDComandasViewModel : INotifyPropertyChanged
     {
+        private readonly ElementoMenuService _elementoMenuService;
         public ObservableCollection<ElementoMenu.TipoElementoMenu> Tipos { get; set; } = new() { 
             ElementoMenu.TipoElementoMenu.Plato,
             ElementoMenu.TipoElementoMenu.Postre,
             ElementoMenu.TipoElementoMenu.Bebida,
         };
-        public ObservableCollection<ElementoMenu> Elementos { get; set; } = new();
+        public ObservableCollection<ElementoMenu> Elementos { get; set; }
         public string NuevoNombre { get; set; }
         public ElementoMenu.TipoElementoMenu NuevoTipo { get; set; } 
         public float NuevoPrecio { get; set; }
@@ -39,28 +42,80 @@ namespace Restaurante.ViewModels
 
         public CRUDComandasViewModel()
         {
-            AgregarCommand = new Command(AgregarElemento);
-            EliminarCommand = new Command(EliminarElemento);
+
+            _elementoMenuService = ElementoMenuService.GetInstance();
+
+
+            AgregarCommand = new Command(async() => await AgregarElemento());
+            EliminarCommand = new Command(async() => await EliminarElemento());
+            Elementos = new ObservableCollection<ElementoMenu>();
+            InicializarDatos();
             
         }
 
-        private void AgregarElemento()
+        private async void InicializarDatos()
         {
-            var nuevo = new ElementoMenu
-            {
-                Nombre = NuevoNombre,
-                Tipo = NuevoTipo,
-                Precio = NuevoPrecio
-            };
-
-            Elementos.Add(nuevo);
-            LimpiarCampos();
+            await CargarDatos();
         }
 
-        private void EliminarElemento()
+        private async Task CargarDatos()
+        {
+
+            Elementos.Clear();
+            var elementosMenus = await _elementoMenuService.ObtenerElementoMenusAsync();
+
+            foreach (var elementosMenu in elementosMenus)
+            {
+                Elementos.Add(elementosMenu);
+            }
+        }
+
+        private async Task AgregarElemento()
+        {
+
+            if (string.IsNullOrEmpty(NuevoNombre))
+            {
+                await Shell.Current.DisplayAlert("Error", "Rellene todos los campos", "Okey");
+            }
+            else
+            {
+                var nuevo = new ElementoMenu
+                {
+                    Nombre = NuevoNombre,
+                    Tipo = NuevoTipo,
+                    Precio = NuevoPrecio
+                };
+
+                int comprobado = await _elementoMenuService.CrearElementoMenu(nuevo);
+                if (comprobado == 0)
+                {
+                    await Shell.Current.DisplayAlert("Error", "Error a la hora de insertar los datos", "Okey");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Info", "Los datos se insertaron correctamente", "Okey");
+                }
+
+            }
+
+            LimpiarCampos();
+            await CargarDatos();
+           
+
+        }
+
+        private async Task EliminarElemento()
         {
             if (ElementoSeleccionado != null)
-                Elementos.Remove(ElementoSeleccionado);
+            {
+                bool aceptar = await Shell.Current.DisplayAlert("Aviso",$"¿Seguro que desea borrar el elemento {ElementoSeleccionado.Nombre}?", "Okey", "Cancelar");
+                if (aceptar)
+                {
+                    await _elementoMenuService.borrarElementoMenu(ElementoSeleccionado);
+                    await CargarDatos();
+                }
+            }
+                
         }
 
 

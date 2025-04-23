@@ -12,7 +12,7 @@
 
     <VerticalStackLayout Padding="20" Spacing="10">
 
-        <!-- Inputs -->
+        
         <Entry Placeholder="Nombre" Text="{Binding NuevoNombre, Mode=TwoWay}" />
         <Picker Title="Tipo" ItemsSource="{Binding Tipos}" SelectedItem="{Binding NuevoTipo,Mode=TwoWay}">
 
@@ -25,7 +25,7 @@
             <Button Text="Eliminar" Command="{Binding EliminarCommand}" />
         </HorizontalStackLayout>
 
-        <!-- Lista -->
+        
         <ListView ItemsSource="{Binding Elementos}"
           SelectedItem="{Binding ElementoSeleccionado}">
             <ListView.ItemTemplate>
@@ -33,9 +33,9 @@
                     <ViewCell>
                         <Grid Padding="10" ColumnDefinitions="*,Auto">
                             
-                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <VerticalStackLayout Grid.Column="0">
                                 <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold"/>
-                                <Label Text="{Binding Tipo}" TextColor="Gray" FontSize="12"/>
+                                <Label Text="{Binding Tipo}" TextColor="Gray" FontSize="10"/>
                             </VerticalStackLayout>
 
                             
