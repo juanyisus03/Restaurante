@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Restaurante.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Restaurante.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Restaurante">
+
+    <TabBar>
+        <Tab Title="Mesas" Icon="mesaicono.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate local:Mesas}"
+                Route="Gestion Mesas" />
+        </Tab>
+        <Tab Title="Gestion Menus" Icon="plato.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate local:CRUDComandasView}"
+                Route="Gestion Menus" />       
+        </Tab>
+    </TabBar>
+
+    
+
+</Shell>

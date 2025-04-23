@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Restaurante.Views.CRUDComandasView"
+             Title="Gestionar Menus"
+             xmlns:bindingContext="clr-namespace:Restaurante.ViewModels">
+
+
+    <ContentPage.BindingContext>
+        <bindingContext:CRUDComandasViewModel/>
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Padding="20" Spacing="10">
+
+        <!-- Inputs -->
+        <Entry Placeholder="Nombre" Text="{Binding NuevoNombre, Mode=TwoWay}" />
+        <Picker Title="Tipo" ItemsSource="{Binding Tipos}" SelectedItem="{Binding NuevoTipo,Mode=TwoWay}">
+
+        </Picker>
+        <Entry Placeholder="Precio" Keyboard="Numeric" Text="{Binding NuevoPrecio, Mode=TwoWay}" />
+
+
+        <HorizontalStackLayout Spacing="10">
+            <Button Text="Agregar" Command="{Binding AgregarCommand}" />
+            <Button Text="Eliminar" Command="{Binding EliminarCommand}" />
+        </HorizontalStackLayout>
+
+        <!-- Lista -->
+        <ListView ItemsSource="{Binding Elementos}"
+          SelectedItem="{Binding ElementoSeleccionado}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10" ColumnDefinitions="*,Auto">
+                            
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="{Binding Nombre}" TextColor="Black" FontAttributes="Bold"/>
+                                <Label Text="{Binding Tipo}" TextColor="Gray" FontSize="12"/>
+                            </VerticalStackLayout>
+
+                            
+                            <Label Grid.Column="1"
+                               Text="{Binding Precio, StringFormat='{0:F2}€'}"
+                               TextColor="Black"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End"
+                               FontAttributes="Bold"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+    </VerticalStackLayout>
+</ContentPage>
