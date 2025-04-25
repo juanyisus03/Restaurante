@@ -8,8 +8,8 @@ public partial class Mesas : ContentPage
     public Mesas()
     {
         InitializeComponent();
-        BindingContext = new MesasViewModel();
         GenerarCeldasGrid();
+        CargarDesdeBD();
     }
 
     private void GenerarCeldasGrid()
@@ -44,8 +44,18 @@ public partial class Mesas : ContentPage
 
                 gridMesa.Add(marco, columna, fila);
             }
+
         }
     }
+
+    private async void CargarDesdeBD()
+    {
+        if (BindingContext is MesasViewModel vm)
+        {
+            await vm.CargarMesasDesdeBaseDeDatos(gridMesa);
+        }
+    }
+
 
 }
 

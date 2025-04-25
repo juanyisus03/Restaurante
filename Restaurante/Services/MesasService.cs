@@ -59,6 +59,11 @@ namespace Restaurante.Services
             return await _connection.InsertAsync(mesa);
         }
 
+        public async Task<int> GuardarMesa(Mesa mesa)
+        {
+            return await _connection.InsertOrReplaceAsync(mesa);
+        }
+
         public async Task<List<Mesa>> ObtenerMesaAsync(int numero)
         {
             return await _connection.Table<Mesa>().Where(u => u.Numero == numero).ToListAsync();

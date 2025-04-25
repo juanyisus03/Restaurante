@@ -1,4 +1,5 @@
 ﻿using Restaurante.Models;
+using Restaurante.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,31 +19,42 @@ namespace Restaurante.ViewModels
         public ObservableCollection<OpcionMesa> OpcionesMesa { get; set; }
         public ICommand MesaTappedCommand { get; }
 
-        private bool _isEditionMode;
 
+        private Color _colorFondo = Colors.White;
+        public Color ColorFondo
+        {
+            get => _colorFondo;
+            set
+            {
+                _colorFondo = value;
+                OnPropertyChanged("ColorFondo");
+            }
+        }
+
+        private bool _isEditionMode;
         public bool isEditionMode
         {
             get => _isEditionMode;
             set
             {
                 _isEditionMode = value;
+                ColorFondo = value ? Colors.LightSalmon : Colors.White; 
                 selectionMode = _isEditionMode ? SelectionMode.Single : SelectionMode.None;
-                OnPropertyChanged(nameof(isEditionMode));
+                OnPropertyChanged("isEditionMode");
             }
         }
 
         private SelectionMode _selectionMode;
-
-
         public SelectionMode selectionMode
         {
             get => _selectionMode;
             set
             {
                 _selectionMode = value;
-                OnPropertyChanged(nameof(selectionMode));
+                OnPropertyChanged("selectionMode");
             }
         }
+      
 
         public MesasViewModel()
         {
@@ -66,7 +78,7 @@ namespace Restaurante.ViewModels
             set
             {
                 _opcionSeleccionada = value;
-                OnPropertyChanged(nameof(OpcionSeleccionada));
+                OnPropertyChanged("OpcionSeleccionada");
             }
         }
 
@@ -84,32 +96,71 @@ namespace Restaurante.ViewModels
             }
             else
             {
-                if (_mapaMesas.ContainsKey((args.fila, args.columna)))
+                if (_mapaMesas.TryGetValue((args.fila, args.columna), out var mesa))
                 {
-                    await App.Current.MainPage.DisplayAlert("Probando", "Esto es una prueba de que funciona mas o menos bien", "Estoy cansado jefe");
+                    string mensaje = $"Número: {mesa.Numero}\n" +
+                                     $"Fila: {mesa.Fila}\n" +
+                                     $"Columna: {mesa.Columna}\n" +
+                                     $"Imagen: {mesa.Imagen}\n" +
+                                     $"Estado: {mesa.Estado}";
+
+                    await App.Current.MainPage.DisplayAlert("Información de Mesa", mensaje, "Cerrar");
                 }
             }
 
         }
 
-        private void cambiarUI((int fila, int columna, Image img) args)
+        public async Task CargarMesasDesdeBaseDeDatos(Grid grid)
+        {
+            var service = MesasService.GetInstance();
+            var mesas = await service.ObtenerMesasAsync();
+
+            foreach (var mesa in mesas)
+            {
+                _mapaMesas[(mesa.Fila, mesa.Columna)] = mesa;
+
+                
+                foreach (var child in grid.Children)
+                {
+                    if (grid.GetRow(child) == mesa.Fila && grid.GetColumn(child) == mesa.Columna && child is Frame frame)
+                    {
+                        if (frame.Content is Image img)
+                        {
+                            img.Source = mesa.Imagen;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private async void cambiarUI((int fila, int columna, Image img) args)
         {
             var (fila, columna, imagenControl) = args;
-            if (OpcionSeleccionada.Nombre == "Borrar")
+            var service = MesasService.GetInstance();
+
+            if (OpcionSeleccionada?.Nombre == "Borrar")
             {
                 if (_mapaMesas.ContainsKey((fila, columna)))
                 {
+                    var mesa = _mapaMesas[(fila, columna)];
                     _mapaMesas.Remove((fila, columna));
                     imagenControl.Source = null;
+
+                    
+                    await service.borrarMesa(mesa);
                 }
             }
             else
             {
-                var mesa = new Mesa(numero: fila * 5 + columna, fila:fila, columna:columna, imagen: OpcionSeleccionada.Imagen);
+                var mesa = new Mesa(numero: fila * 5 + columna, fila: fila, columna: columna, imagen: OpcionSeleccionada.Imagen);
                 _mapaMesas[(fila, columna)] = mesa;
                 imagenControl.Source = mesa.Imagen;
+
+                await service.GuardarMesa(mesa); 
             }
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
