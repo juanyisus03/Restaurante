@@ -13,55 +13,36 @@
     <VerticalStackLayout Padding="0,20,0,0">
 
 
-        <Grid  x:Name="gridMesa"  MaximumHeightRequest="400" MaximumWidthRequest="400">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="80"/>
+        <AbsoluteLayout HeightRequest="400" WidthRequest="400">
+            
+            <Image Source="suelo.png"
+           Aspect="AspectFill"
+           AbsoluteLayout.LayoutBounds="0,0,1,1"
+           AbsoluteLayout.LayoutFlags="All"/>
 
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
-            </Grid.ColumnDefinitions>
+            
+            <Grid x:Name="gridMesa"
+          MaximumHeightRequest="400"
+          MaximumWidthRequest="400"
+          AbsoluteLayout.LayoutBounds="0,0,1,1"
+          AbsoluteLayout.LayoutFlags="All">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition Height="80"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
+        </AbsoluteLayout>
 
-
-            <BoxView Color="Red" Grid.Row="0" Grid.Column="0"/>
-            <BoxView Color="Green" Grid.Row="0" Grid.Column="1"/>
-            <BoxView Color="Blue" Grid.Row="0" Grid.Column="2"/>
-            <BoxView Color="Yellow" Grid.Row="0" Grid.Column="3"/>
-            <BoxView Color="Orange" Grid.Row="0" Grid.Column="4"/>
-
-            <BoxView Color="Purple" Grid.Row="1" Grid.Column="0"/>
-            <BoxView Color="Pink" Grid.Row="1" Grid.Column="1"/>
-            <BoxView Color="Teal" Grid.Row="1" Grid.Column="2"/>
-            <BoxView Color="Brown" Grid.Row="1" Grid.Column="3"/>
-            <BoxView Color="Gray" Grid.Row="1" Grid.Column="4"/>
-
-            <BoxView Color="Olive" Grid.Row="2" Grid.Column="0"/>
-            <BoxView Color="Lime" Grid.Row="2" Grid.Column="1"/>
-            <BoxView Color="Aqua" Grid.Row="2" Grid.Column="2"/>
-            <BoxView Color="Coral" Grid.Row="2" Grid.Column="3"/>
-            <BoxView Color="Gold" Grid.Row="2" Grid.Column="4"/>
-
-            <BoxView Color="Silver" Grid.Row="3" Grid.Column="0"/>
-            <BoxView Color="Navy" Grid.Row="3" Grid.Column="1"/>
-            <BoxView Color="Maroon" Grid.Row="3" Grid.Column="2"/>
-            <BoxView Color="Beige" Grid.Row="3" Grid.Column="3"/>
-            <BoxView Color="SkyBlue" Grid.Row="3" Grid.Column="4"/>
-
-            <BoxView Color="Salmon" Grid.Row="4" Grid.Column="0"/>
-            <BoxView Color="Khaki" Grid.Row="4" Grid.Column="1"/>
-            <BoxView Color="Crimson" Grid.Row="4" Grid.Column="2"/>
-            <BoxView Color="Turquoise" Grid.Row="4" Grid.Column="3"/>
-            <BoxView Color="Plum" Grid.Row="4" Grid.Column="4"/>
-
-        </Grid>
         <HorizontalStackLayout HorizontalOptions="CenterAndExpand">
 
             <Switch IsToggled="{Binding isEditionMode}" x:Name="swEdicion"  />

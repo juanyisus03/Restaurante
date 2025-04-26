@@ -12,7 +12,7 @@
 
     <VerticalStackLayout Padding="20" Spacing="10">
 
-        
+        <Image Source="carta.png" WidthRequest="200" HeightRequest="200" Aspect="AspectFit" HorizontalOptions="Center"/>
         <Entry Placeholder="Nombre" Text="{Binding NuevoNombre, Mode=TwoWay}" />
         <Picker Title="Tipo" ItemsSource="{Binding Tipos}" SelectedItem="{Binding NuevoTipo,Mode=TwoWay}">
 
