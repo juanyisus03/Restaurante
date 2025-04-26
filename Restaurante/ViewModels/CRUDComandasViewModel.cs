@@ -61,6 +61,7 @@ namespace Restaurante.ViewModels
         // Inicializar datos llamando a CargarDatos
         private async void InicializarDatos()
         {
+            await _elementoMenuService.CargarDatos();
             await CargarDatos();
         }
 

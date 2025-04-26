@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Restaurante.Models
 {
-    [Table("ElementoMenu")]
+    [Table("ElementoMenus")]
     public class ElementoMenu
     {
         [PrimaryKey, AutoIncrement]
