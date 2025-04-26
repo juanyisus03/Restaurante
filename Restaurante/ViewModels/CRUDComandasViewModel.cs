@@ -8,23 +8,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Restaurante.ViewModels
 {
-   public class CRUDComandasViewModel : INotifyPropertyChanged
+    public class CRUDComandasViewModel : INotifyPropertyChanged
     {
         private readonly ElementoMenuService _elementoMenuService;
-        public ObservableCollection<ElementoMenu.TipoElementoMenu> Tipos { get; set; } = new() { 
+
+        // Lista de tipos de elementos del menú disponibles
+        public ObservableCollection<ElementoMenu.TipoElementoMenu> Tipos { get; set; } = new()
+        {
             ElementoMenu.TipoElementoMenu.Plato,
             ElementoMenu.TipoElementoMenu.Postre,
             ElementoMenu.TipoElementoMenu.Bebida,
         };
-        public ObservableCollection<ElementoMenu> Elementos { get; set; }
-        public string NuevoNombre { get; set; }
-        public ElementoMenu.TipoElementoMenu NuevoTipo { get; set; } 
-        public float NuevoPrecio { get; set; }
 
+        // Lista de elementos actuales en el menú
+        public ObservableCollection<ElementoMenu> Elementos { get; set; }
+
+        // Propiedades para crear un nuevo elemento
+        public string NuevoNombre { get; set; }
+        public ElementoMenu.TipoElementoMenu NuevoTipo { get; set; }
+        public float NuevoPrecio { get; set; }
 
         private ElementoMenu _elementoSeleccionado;
         public ElementoMenu ElementoSeleccionado
@@ -33,34 +38,35 @@ namespace Restaurante.ViewModels
             set
             {
                 _elementoSeleccionado = value;
-                OnPropertyChanged(nameof(ElementoSeleccionado));   
+                OnPropertyChanged(nameof(ElementoSeleccionado));
             }
         }
 
+        // Comandos de agregar y eliminar
         public ICommand AgregarCommand { get; }
         public ICommand EliminarCommand { get; }
 
+        // Constructor
         public CRUDComandasViewModel()
         {
-
             _elementoMenuService = ElementoMenuService.GetInstance();
 
+            AgregarCommand = new Command(async () => await AgregarElemento());
+            EliminarCommand = new Command(async () => await EliminarElemento());
 
-            AgregarCommand = new Command(async() => await AgregarElemento());
-            EliminarCommand = new Command(async() => await EliminarElemento());
             Elementos = new ObservableCollection<ElementoMenu>();
             InicializarDatos();
-            
         }
 
+        // Inicializar datos llamando a CargarDatos
         private async void InicializarDatos()
         {
             await CargarDatos();
         }
 
+        // Cargar elementos del menú desde la base de datos
         private async Task CargarDatos()
         {
-
             Elementos.Clear();
             var elementosMenus = await _elementoMenuService.ObtenerElementoMenusAsync();
 
@@ -70,9 +76,9 @@ namespace Restaurante.ViewModels
             }
         }
 
+        // Agregar un nuevo elemento al menú
         private async Task AgregarElemento()
         {
-
             if (string.IsNullOrEmpty(NuevoNombre))
             {
                 await Shell.Current.DisplayAlert("Error", "Rellene todos los campos", "Okey");
@@ -95,41 +101,41 @@ namespace Restaurante.ViewModels
                 {
                     await Shell.Current.DisplayAlert("Info", "Los datos se insertaron correctamente", "Okey");
                 }
-
             }
 
             LimpiarCampos();
             await CargarDatos();
-           
-
         }
 
+        // Eliminar un elemento seleccionado del menú
         private async Task EliminarElemento()
         {
             if (ElementoSeleccionado != null)
             {
-                bool aceptar = await Shell.Current.DisplayAlert("Aviso",$"¿Seguro que desea borrar el elemento {ElementoSeleccionado.Nombre}?", "Okey", "Cancelar");
+                bool aceptar = await Shell.Current.DisplayAlert("Aviso", $"¿Seguro que desea borrar el elemento {ElementoSeleccionado.Nombre}?", "Okey", "Cancelar");
                 if (aceptar)
                 {
                     await _elementoMenuService.borrarElementoMenu(ElementoSeleccionado);
                     await CargarDatos();
                 }
             }
-                
         }
 
-
+        // Limpiar los campos del formulario de alta
         private void LimpiarCampos()
         {
             NuevoNombre = string.Empty;
             NuevoTipo = ElementoMenu.TipoElementoMenu.Plato;
             NuevoPrecio = 0;
+
             OnPropertyChanged(nameof(NuevoNombre));
             OnPropertyChanged(nameof(NuevoTipo));
             OnPropertyChanged(nameof(NuevoPrecio));
         }
 
+        // Evento de cambio de propiedad
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

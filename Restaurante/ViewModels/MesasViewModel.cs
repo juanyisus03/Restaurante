@@ -13,13 +13,19 @@ namespace Restaurante.ViewModels
 {
     public class MesasViewModel : INotifyPropertyChanged
     {
+        // Propiedad privada para la opción de mesa seleccionada
         private OpcionMesa? _opcionSeleccionada;
+
+        // Diccionario para mapear la ubicación (fila, columna) a una mesa
         private Dictionary<(int fila, int columna), Mesa> _mapaMesas;
 
+        // Colección observable de opciones de mesa disponibles
         public ObservableCollection<OpcionMesa> OpcionesMesa { get; set; }
+
+        // Comando que se ejecuta al hacer tap en una mesa
         public ICommand MesaTappedCommand { get; }
 
-
+        // Propiedades para manejar el color de fondo (cambia en modo edición)
         private Color _colorFondo = Colors.White;
         public Color ColorFondo
         {
@@ -31,6 +37,7 @@ namespace Restaurante.ViewModels
             }
         }
 
+        // Modo de edición activo o no
         private bool _isEditionMode;
         public bool isEditionMode
         {
@@ -38,12 +45,14 @@ namespace Restaurante.ViewModels
             set
             {
                 _isEditionMode = value;
+                // Cambiar color de fondo al entrar/salir del modo edición
                 ColorFondo = value ? Colors.LightSalmon : Colors.White; 
                 selectionMode = _isEditionMode ? SelectionMode.Single : SelectionMode.None;
                 OnPropertyChanged("isEditionMode");
             }
         }
 
+        // Controla el modo de selección del grid
         private SelectionMode _selectionMode;
         public SelectionMode selectionMode
         {
@@ -54,8 +63,8 @@ namespace Restaurante.ViewModels
                 OnPropertyChanged("selectionMode");
             }
         }
-      
 
+        // Constructor: inicializa el diccionario, las opciones de mesa y el comando
         public MesasViewModel()
         {
             _mapaMesas = new Dictionary<(int fila, int columna), Mesa>();
@@ -69,9 +78,10 @@ namespace Restaurante.ViewModels
 
             _isEditionMode = false;
             MesaTappedCommand = new Command<(int fila, int columna, Image img)>(ManejarClickCelda);
-
+           
         }
 
+        // Propiedad pública para la opción seleccionada
         public OpcionMesa? OpcionSeleccionada
         {
             get => _opcionSeleccionada;
@@ -82,22 +92,21 @@ namespace Restaurante.ViewModels
             }
         }
 
-
-
+        // Manejar el tap en una celda: editar o mostrar información
         private async void ManejarClickCelda((int fila, int columna, Image img) args)
         {
 
-
-            if (OpcionSeleccionada == null) return;
-
             if (isEditionMode)
             {
+                if (OpcionSeleccionada == null) return;
+                
                 cambiarUI(args);
             }
             else
             {
                 if (_mapaMesas.TryGetValue((args.fila, args.columna), out var mesa))
                 {
+                    // Mostrar información de la mesa
                     string mensaje = $"Número: {mesa.Numero}\n" +
                                      $"Fila: {mesa.Fila}\n" +
                                      $"Columna: {mesa.Columna}\n" +
@@ -107,19 +116,19 @@ namespace Restaurante.ViewModels
                     await App.Current.MainPage.DisplayAlert("Información de Mesa", mensaje, "Cerrar");
                 }
             }
-
         }
 
+        // Cargar mesas almacenadas en la base de datos y actualizar el grid
         public async Task CargarMesasDesdeBaseDeDatos(Grid grid)
         {
             var service = MesasService.GetInstance();
             var mesas = await service.ObtenerMesasAsync();
 
+
             foreach (var mesa in mesas)
             {
                 _mapaMesas[(mesa.Fila, mesa.Columna)] = mesa;
 
-                
                 foreach (var child in grid.Children)
                 {
                     if (grid.GetRow(child) == mesa.Fila && grid.GetColumn(child) == mesa.Columna && child is Frame frame)
@@ -134,6 +143,7 @@ namespace Restaurante.ViewModels
         }
 
 
+        // Cambiar el contenido visual de una celda según la acción seleccionada
         private async void cambiarUI((int fila, int columna, Image img) args)
         {
             var (fila, columna, imagenControl) = args;
@@ -141,13 +151,10 @@ namespace Restaurante.ViewModels
 
             if (OpcionSeleccionada?.Nombre == "Borrar")
             {
-                if (_mapaMesas.ContainsKey((fila, columna)))
+                if (_mapaMesas.TryGetValue((args.fila, args.columna), out var mesa))
                 {
-                    var mesa = _mapaMesas[(fila, columna)];
                     _mapaMesas.Remove((fila, columna));
                     imagenControl.Source = null;
-
-                    
                     await service.borrarMesa(mesa);
                 }
             }
@@ -157,13 +164,14 @@ namespace Restaurante.ViewModels
                 _mapaMesas[(fila, columna)] = mesa;
                 imagenControl.Source = mesa.Imagen;
 
-                await service.GuardarMesa(mesa); 
+                await service.GuardarMesa(mesa);
             }
         }
 
-
+        // Evento de cambio de propiedad
         public event PropertyChangedEventHandler PropertyChanged;
 
+        // Método para notificar cambios de propiedades
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
