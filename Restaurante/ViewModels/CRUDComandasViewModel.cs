@@ -1,5 +1,7 @@
-﻿using Restaurante.Models;
+﻿using CommunityToolkit.Maui.Views;
+using Restaurante.Models;
 using Restaurante.Services;
+using Restaurante.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,6 +40,7 @@ namespace Restaurante.ViewModels
             set
             {
                 _elementoSeleccionado = value;
+                MostrarPopupEditar(value);
                 OnPropertyChanged(nameof(ElementoSeleccionado));
             }
         }
@@ -121,6 +124,30 @@ namespace Restaurante.ViewModels
                 }
             }
         }
+
+
+        private async Task MostrarPopupEditar(ElementoMenu item)
+        {
+            if (item == null)
+                return;
+
+            var popup = new PopUpElementoMenu(item);
+
+            popup.OnEditar = async (editado) =>
+            {
+                await _elementoMenuService.ActualizarElementoMenu(editado);
+                await CargarDatos();
+            };
+
+            popup.OnEliminar = async (eliminar) =>
+            {
+                await _elementoMenuService.borrarElementoMenu(eliminar);
+                await CargarDatos();
+            };
+
+            await Shell.Current.CurrentPage.ShowPopupAsync(popup);
+        }
+
 
         // Limpiar los campos del formulario de alta
         private void LimpiarCampos()

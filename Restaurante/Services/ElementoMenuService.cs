@@ -96,5 +96,10 @@ namespace Restaurante.Services
         {
             return await _connection.Table<ElementoMenu>().Where(u => u.Id == em.Id).DeleteAsync();
         }
+
+        public async Task<int> ActualizarElementoMenu(ElementoMenu editado)
+        {
+            return await _connection.UpdateAsync(editado);
+        }
     }
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Restaurante.Views.Welcome"
+             Shell.BackgroundColor="Transparent"
+             Title="Bienvenido">
+
+    <Grid>
+        
+        <Image Source="fondo.png"
+               Aspect="AspectFill"
+               Opacity="0.3"
+               IsVisible="True"
+               VerticalOptions="FillAndExpand"
+               HorizontalOptions="FillAndExpand" />
+
+        <!-- Contenido principal encima -->
+        <VerticalStackLayout Padding="30" Spacing="25"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center">
+
+            <Frame
+    Padding="0"
+    CornerRadius="75"
+    WidthRequest="150"
+    HeightRequest="150"
+    IsClippedToBounds="True"
+    HasShadow="False"
+    BorderColor="Transparent"
+    HorizontalOptions="Center"
+    VerticalOptions="Center">
+
+                <Image Source="splash.png"
+           Aspect="AspectFill"
+           WidthRequest="150"
+           HeightRequest="150" />
+            </Frame>
+
+
+            <Label Text="¡Bienvenido a la Gestión del Restaurante!"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="#333"
+                   HorizontalOptions="Center" />
+
+            <Label Text="Gestión de mesas rápida y sencilla"
+                   FontSize="18"
+                   TextColor="#555"
+                   HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

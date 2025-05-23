@@ -4,22 +4,30 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Restaurante.Views"
-    Shell.FlyoutBehavior="Disabled"
+    
     Title="Restaurante">
+    <FlyoutItem Title="Bienvenida">
+        <ShellContent
+            ContentTemplate="{DataTemplate local:Welcome}"
+            Route="Bienvenida" />
+    </FlyoutItem>
 
-    <TabBar>
+    <FlyoutItem Title="Gestionar">
+
         <Tab Title="Mesas" Icon="mesaicono.png">
             <ShellContent
-                ContentTemplate="{DataTemplate local:Mesas}"
-                Route="Gestion Mesas" />
+            ContentTemplate="{DataTemplate local:Mesas}"
+            Route="Gestion Mesas" />
         </Tab>
         <Tab Title="Gestion Menus" Icon="plato.png">
             <ShellContent
-                ContentTemplate="{DataTemplate local:CRUDComandasView}"
-                Route="Gestion Menus" />       
+            ContentTemplate="{DataTemplate local:CRUDComandasView}"
+            Route="Gestion Menus" />
         </Tab>
-    </TabBar>
+    </FlyoutItem>
 
-    
+
+
+
 
 </Shell>

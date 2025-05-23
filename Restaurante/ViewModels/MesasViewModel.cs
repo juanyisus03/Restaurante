@@ -1,5 +1,6 @@
 ﻿using Restaurante.Models;
 using Restaurante.Services;
+using Restaurante.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -106,16 +107,23 @@ namespace Restaurante.ViewModels
             {
                 if (_mapaMesas.TryGetValue((args.fila, args.columna), out var mesa))
                 {
-                    // Mostrar información de la mesa
-                    string mensaje = $"Número: {mesa.Numero}\n" +
-                                     $"Fila: {mesa.Fila}\n" +
-                                     $"Columna: {mesa.Columna}\n" +
-                                     $"Imagen: {mesa.Imagen}\n" +
-                                     $"Estado: {mesa.Estado}";
+                    await App.Current.MainPage.Navigation.PushAsync(new PedidosView(mesa));
 
-                    await App.Current.MainPage.DisplayAlert("Información de Mesa", mensaje, "Cerrar");
+                    //await DebugMesa(mesa);
                 }
             }
+        }
+
+        private static async Task DebugMesa(Mesa mesa)
+        {
+            // Mostrar información de la mesa
+            string mensaje = $"Número: {mesa.Numero}\n" +
+                             $"Fila: {mesa.Fila}\n" +
+                             $"Columna: {mesa.Columna}\n" +
+                             $"Imagen: {mesa.Imagen}\n" +
+                             $"Estado: {mesa.Estado}";
+
+            await App.Current.MainPage.DisplayAlert("Información de Mesa", mensaje, "Cerrar");
         }
 
         // Cargar mesas almacenadas en la base de datos y actualizar el grid

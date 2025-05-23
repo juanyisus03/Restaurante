@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="Restaurante.Views.PopUpPedido" Color="#00000000">
+    
+
+    <Frame CornerRadius="20"
+           BackgroundColor="White"
+           Padding="20"
+           WidthRequest="320"
+           HasShadow="True"
+           VerticalOptions="Center"
+           HorizontalOptions="Center">
+
+        <VerticalStackLayout Spacing="15">
+            <Label Text="Nuevo Pedido"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="#2C3E50" />
+
+            <Picker Title="Selecciona un elemento"
+                    ItemsSource="{Binding ElementosMenu}"
+                    ItemDisplayBinding="{Binding Nombre}"
+                    SelectedItem="{Binding ElementoSeleccionado}"
+                    
+                    TitleColor="#666"
+                    HeightRequest="45"
+                    Margin="0,0,0,5" />
+
+            <Entry Placeholder="Cantidad"
+                   Keyboard="Numeric"
+                   Text="{Binding Cantidad}"
+                   
+                   HeightRequest="45"
+                   Margin="0,0,0,10" />
+
+            <HorizontalStackLayout Spacing="15"
+                                   HorizontalOptions="Center">
+                <Button Text="Agregar"
+                        Clicked="OnAgregarClicked"
+                        BackgroundColor="#27AE60"
+                        TextColor="White"
+                        CornerRadius="12"
+                        Padding="10,5"
+                        WidthRequest="100" />
+
+                <Button Text="Cancelar"
+                        Clicked="OnCancelarClicked"
+                        BackgroundColor="#E0E0E0"
+                        TextColor="Black"
+                        CornerRadius="12"
+                        Padding="10,5"
+                        WidthRequest="100" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Frame>
+</toolkit:Popup>

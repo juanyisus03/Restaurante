@@ -79,6 +79,7 @@ namespace Restaurante.Services
         // Borrar una mesa de la base de datos
         public async Task<int> borrarMesa(Mesa em)
         {
+            await _connection.Table<Pedido>().Where(p => p.MesaId == em.Numero).DeleteAsync();
             return await _connection.Table<Mesa>().Where(u => u.Numero == em.Numero).DeleteAsync();
         }
     }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="Restaurante.Views.PopUpElementoMenu"
+               Color="#00000000">
+
+    <Frame CornerRadius="20" Padding="25" BackgroundColor="White" HasShadow="True" WidthRequest="320">
+        <VerticalStackLayout Spacing="15">
+
+            <Label Text="Editar Elemento"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="#333" />
+
+            <Entry Text="{Binding Elemento.Nombre}"
+                   Placeholder="Nombre"
+                   FontSize="16"
+
+                   Margin="0,5"/>
+
+            <Entry Text="{Binding Elemento.Precio}"
+                   Placeholder="Precio"
+                   Keyboard="Numeric"
+                   FontSize="16"
+
+                   Margin="0,5"/>
+
+            <Picker SelectedItem="{Binding Elemento.Tipo}"
+                    ItemsSource="{Binding Tipos}"
+                    Title="Tipo"
+                    FontSize="16"
+ 
+                    Margin="0,5"/>
+
+            <HorizontalStackLayout Spacing="15"
+                                   HorizontalOptions="Center"
+                                   Margin="0,10,0,0">
+                <Button Text="Guardar"
+                        Clicked="OnGuardarClicked"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        FontSize="16"
+                        Padding="10"
+                        CornerRadius="12"
+                        WidthRequest="120" />
+
+                <Button Text="Eliminar"
+                        Clicked="OnEliminarClicked"
+                        BackgroundColor="#E57373"
+                        TextColor="White"
+                        FontSize="16"
+                        Padding="10"
+                        CornerRadius="12"
+                        WidthRequest="120" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </Frame>
+</toolkit:Popup>

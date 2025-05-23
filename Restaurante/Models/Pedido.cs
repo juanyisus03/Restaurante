@@ -1,17 +1,19 @@
 ﻿using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurante.Models
 {
-    class Pedido
+    public class Pedido
     {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [PrimaryKey]
         public int MesaId { get; set; }
-        public int ElementoMenu {  get; set; }
+
+        [PrimaryKey]
+        public int ElementoMenu { get; set; }
+
+        public int Cantidad { get; set; }
+
+        [Ignore]
+        public ElementoMenu ElementoMenuPedido { get; set; }
+
     }
 }
