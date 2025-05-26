@@ -9,8 +9,9 @@ public partial class Mesas : ContentPage
     public Mesas()
     {
         InitializeComponent();
-        GenerarCeldasGrid(); // Método que crea la estructura visual del grid
-        CargarDesdeBD();     // Método que carga las mesas almacenadas
+        MostrarDialogoAyuda(); // Método que genera un DisplayAlert para ayuda
+        GenerarCeldasGrid();   // Método que crea la estructura visual del grid
+        CargarDesdeBD();       // Método que carga las mesas almacenadas
     }
 
     // Genera las celdas del grid dinámicamente
@@ -63,4 +64,24 @@ public partial class Mesas : ContentPage
             await vm.CargarMesasDesdeBaseDeDatos(gridMesa);
         }
     }
+
+    private async void MostrarDialogoAyuda()
+    {
+        bool yaMostrado = Preferences.Get("Mesas_AyudaMostrada", false);
+        if (yaMostrado) return;
+
+        bool noMostrarMas = await Application.Current.MainPage.DisplayAlert(
+            "Bienvenido",
+            "Aquí puedes gestionar todas las mesas del restaurante.\n \u25CF Haz click en el boton para activar modo edición y gestionar el layout de mesas. \n\n\n \u25CF Toca una celda con mesa sin el modo edicion para empezar a asignarle pedidos a la mesa.",
+            "No volver a mostrar",
+            "OK"
+        );
+
+        if (noMostrarMas)
+        {
+            Preferences.Set("Mesas_AyudaMostrada", true);
+        }
+    }
+
+
 }

@@ -40,14 +40,14 @@ class ElementoMenuService
 
             var elementosIniciales = new List<ElementoMenu>
             {
-                new ElementoMenu { Nombre = "Hamburguesa", Precio = 120.50f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
-                new ElementoMenu { Nombre = "Pizza Margarita", Precio = 150.00f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
-                new ElementoMenu { Nombre = "Ensalada César", Precio = 95.75f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
-                new ElementoMenu { Nombre = "Coca Cola", Precio = 35.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
-                new ElementoMenu { Nombre = "Jugo de Naranja", Precio = 40.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
-                new ElementoMenu { Nombre = "Agua Mineral", Precio = 25.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
-                new ElementoMenu { Nombre = "Pastel de Chocolate", Precio = 80.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre },
-                new ElementoMenu { Nombre = "Helado de Vainilla", Precio = 60.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre }
+                new ElementoMenu { Nombre = "Hamburguesa", Precio = 5.50f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
+                new ElementoMenu { Nombre = "Pizza Margarita", Precio = 10.00f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
+                new ElementoMenu { Nombre = "Ensalada César", Precio = 5.50f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
+                new ElementoMenu { Nombre = "Coca Cola", Precio = 1.50f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
+                new ElementoMenu { Nombre = "Jugo de Naranja", Precio = 1.40f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
+                new ElementoMenu { Nombre = "Agua Mineral", Precio = 1.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
+                new ElementoMenu { Nombre = "Pastel de Chocolate", Precio = 6.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre },
+                new ElementoMenu { Nombre = "Helado de Vainilla", Precio = 4.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre }
             };
 
             await _connection.InsertAllAsync(elementosIniciales);
@@ -95,6 +95,7 @@ class ElementoMenuService
     // Borrar un elemento del menú
     public async Task<int> borrarElementoMenu(ElementoMenu em)
     {
+        await PedidosService.GetInstance().BorrarPedidosElementoMenuAsync(em.Id);
         return await _connection.Table<ElementoMenu>().Where(u => u.Id == em.Id).DeleteAsync();
     }
 

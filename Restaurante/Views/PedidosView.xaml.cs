@@ -12,5 +12,11 @@ public partial class PedidosView : ContentPage
 		
 		InitializeComponent();
 		BindingContext = new PedidosViewModel(mesa);
+		Appearing += CargarDatosViewModel;
 	}
+
+    private async void CargarDatosViewModel(object? sender, EventArgs e)
+    {
+		await ((PedidosViewModel) BindingContext).CargarDatos();
+    }
 }

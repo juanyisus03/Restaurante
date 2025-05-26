@@ -21,6 +21,7 @@ public class PedidosViewModel : INotifyPropertyChanged
     public ObservableCollection<Pedido> Pedidos { get; set; } = new();
     public Mesa Mesa { get; }
 
+
     private string _totalTexto = "Pagar 0 €";
     public string TotalTexto
     {
@@ -47,6 +48,7 @@ public class PedidosViewModel : INotifyPropertyChanged
     public ICommand IncrementarCantidadCommand { get; }
     public ICommand DecrementarCantidadCommand { get; }
     public ICommand EliminarCommand { get; }
+    public ICommand BorrarTodosCommand { get; }
     public ICommand AgregarCommand { get; }
     public ICommand PagarCommand { get; }
 
@@ -62,7 +64,14 @@ public class PedidosViewModel : INotifyPropertyChanged
         EliminarCommand = new Command<Pedido>(async (pedido) => await EliminarPedido(pedido));
         DecrementarCantidadCommand = new Command<Pedido>(async (pedido) => await CambiarCantidad(pedido, -1));
         IncrementarCantidadCommand = new Command<Pedido>(async (pedido) => await CambiarCantidad(pedido, 1));
+        BorrarTodosCommand = new Command(async () => await BorrarTodosPedidoMesa());
         PagarCommand = new Command(async () => await GenerarTicketPDF());
+    }
+
+    private async Task BorrarTodosPedidoMesa()
+    {
+        await _pedidoService.BorrarPedidosMesaAsync(Mesa.Numero);
+        await CargarDatos();      
     }
 
     // Genera y guarda un ticket en PDF

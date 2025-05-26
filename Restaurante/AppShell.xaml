@@ -6,23 +6,40 @@
     xmlns:local="clr-namespace:Restaurante.Views"
     
     Title="Restaurante">
-    <FlyoutItem Title="Bienvenida">
+    <Shell.FlyoutHeader>
+        <Grid BackgroundColor="#eb6b13" Padding="20" HeightRequest="150">
+            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                <Image Source="round_splash.png"
+                   WidthRequest="100"
+                   HeightRequest="100"
+                   Aspect="AspectFill"/>
+                <Label Text="Restaurante App"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    
+    <FlyoutItem Title="Bienvenida" Icon="home.png">
         <ShellContent
             ContentTemplate="{DataTemplate local:Welcome}"
             Route="Bienvenida" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Gestionar">
+    <FlyoutItem Title="Gestionar" Icon="gestionar.png">
 
         <Tab Title="Mesas" Icon="mesaicono.png">
             <ShellContent
-            ContentTemplate="{DataTemplate local:Mesas}"
-            Route="Gestion Mesas" />
+                ContentTemplate="{DataTemplate local:Mesas}"
+                Route="GestionMesas" />
         </Tab>
         <Tab Title="Gestion Menus" Icon="plato.png">
             <ShellContent
-            ContentTemplate="{DataTemplate local:CRUDComandasView}"
-            Route="Gestion Menus" />
+                ContentTemplate="{DataTemplate local:CRUDComandasView}"
+                Route="GestionMenus" />
         </Tab>
     </FlyoutItem>
 

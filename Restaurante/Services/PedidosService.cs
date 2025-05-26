@@ -40,7 +40,7 @@ class PedidosService
 
             List<Mesa> mesas = await _connection.Table<Mesa>().ToListAsync();
             List<ElementoMenu> elementos = await _connection.Table<ElementoMenu>().ToListAsync();
-            var pedidosIniciales = new List<Pedido>();
+            
 
             Random randomMesa = new Random();
             Random randomElemento = new Random();
@@ -53,10 +53,10 @@ class PedidosService
                     ElementoMenu = elementos[randomElemento.Next(elementos.Count)].Id,
                     Cantidad = randomMesa.Next(1, 6)
                 };
-                pedidosIniciales.Add(pedido);
+                await CrearPedido(pedido);
             }
 
-            await _connection.InsertAllAsync(pedidosIniciales);
+            
         }
         catch (Exception ex)
         {
@@ -89,12 +89,29 @@ class PedidosService
     }
 
     // Obtiene los pedidos de una mesa específica
+    public async Task<int> BorrarPedidosMesaAsync(int mesa)
+    {
+        return await _connection.Table<Pedido>()
+            .Where(u => u.MesaId == mesa)
+            .DeleteAsync();
+    }
+
+    // Obtiene los pedidos de un elementoMenu específic
+    public async Task<int> BorrarPedidosElementoMenuAsync(int elementoMenu)
+    {
+        return await _connection.Table<Pedido>()
+            .Where(u => u.ElementoMenu == elementoMenu)
+            .DeleteAsync();
+    }
+
+    // Elimina un pedido por mesa 
     public async Task<List<Pedido>> ObtenerPedidosMesaAsync(int mesa)
     {
         return await _connection.Table<Pedido>()
             .Where(u => u.MesaId == mesa)
             .ToListAsync();
     }
+
 
     // Obtiene todos los pedidos
     public async Task<List<Pedido>> ObtenerPedidosAsync()
