@@ -1,105 +1,106 @@
 ﻿using Restaurante.Models;
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Restaurante.Services
+namespace Restaurante.Services;
+
+// Servicio para gestionar los elementos del menú
+class ElementoMenuService
 {
-    class ElementoMenuService
+    private readonly SQLiteAsyncConnection _connection;
+    private static ElementoMenuService? instance;
+
+    // Constructor privado para Singleton
+    private ElementoMenuService(string dbpath)
     {
-        private readonly SQLiteAsyncConnection _connection;
-        private static ElementoMenuService? instance;
+        _connection = new SQLiteAsyncConnection(dbpath);
+        _connection.CreateTableAsync<ElementoMenu>().Wait();
+    }
 
-        private ElementoMenuService(string dbpath)
+    // Obtener instancia del servicio (Singleton)
+    public static ElementoMenuService GetInstance()
+    {
+        string dbpath = Path.Combine(FileSystem.AppDataDirectory, "restaurante.db");
+        return instance ??= new ElementoMenuService(dbpath);
+    }
+
+    // Verifica si hay registros en la base de datos
+    public async Task<bool> BaseDeDatosTieneRegistros()
+    {
+        var count = await _connection.Table<ElementoMenu>().CountAsync();
+        return count > 0;
+    }
+
+    // Carga elementos iniciales si no hay registros
+    public async Task CargarDatos()
+    {
+        try
         {
-            _connection = new SQLiteAsyncConnection(dbpath);
-            _connection.CreateTableAsync<ElementoMenu>().Wait();
-        }
+            if (await BaseDeDatosTieneRegistros())
+                return;
 
-        public static ElementoMenuService GetInstance()
-        {
-            string dbpath = Path.Combine(FileSystem.AppDataDirectory, "restaurante.db");
-            return instance ??= new ElementoMenuService(dbpath);
-        }
-
-        public async Task<bool> BaseDeDatosTieneRegistros()
-        {
-            var count = await _connection.Table<ElementoMenu>().CountAsync();
-
-            return count > 0;
-        }
-
-        public async Task CargarDatos()
-        {
-            try
+            var elementosIniciales = new List<ElementoMenu>
             {
-                if (await BaseDeDatosTieneRegistros())
-                {
-                    return;
-                }
+                new ElementoMenu { Nombre = "Hamburguesa", Precio = 120.50f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
+                new ElementoMenu { Nombre = "Pizza Margarita", Precio = 150.00f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
+                new ElementoMenu { Nombre = "Ensalada César", Precio = 95.75f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
+                new ElementoMenu { Nombre = "Coca Cola", Precio = 35.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
+                new ElementoMenu { Nombre = "Jugo de Naranja", Precio = 40.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
+                new ElementoMenu { Nombre = "Agua Mineral", Precio = 25.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
+                new ElementoMenu { Nombre = "Pastel de Chocolate", Precio = 80.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre },
+                new ElementoMenu { Nombre = "Helado de Vainilla", Precio = 60.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre }
+            };
 
-                var elementosIniciales = new List<ElementoMenu>
-                {
-                    new ElementoMenu { Nombre = "Hamburguesa", Precio = 120.50f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
-                    new ElementoMenu { Nombre = "Pizza Margarita", Precio = 150.00f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
-                    new ElementoMenu { Nombre = "Ensalada César", Precio = 95.75f, Tipo = ElementoMenu.TipoElementoMenu.Plato },
-                    new ElementoMenu { Nombre = "Coca Cola", Precio = 35.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
-                    new ElementoMenu { Nombre = "Jugo de Naranja", Precio = 40.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
-                    new ElementoMenu { Nombre = "Agua Mineral", Precio = 25.00f, Tipo = ElementoMenu.TipoElementoMenu.Bebida },
-                    new ElementoMenu { Nombre = "Pastel de Chocolate", Precio = 80.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre },
-                    new ElementoMenu { Nombre = "Helado de Vainilla", Precio = 60.00f, Tipo = ElementoMenu.TipoElementoMenu.Postre }
-                };
-
-                await _connection.InsertAllAsync(elementosIniciales);
-            }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("Error", $"Ocurrió un error al cargar datos: {ex.Message}", "OK");
-            }
+            await _connection.InsertAllAsync(elementosIniciales);
         }
-
-        public async Task<int> CrearElementoMenu(ElementoMenu elementoMenu)
+        catch (Exception ex)
         {
-            return await _connection.InsertAsync(elementoMenu);
+            await Shell.Current.DisplayAlert("Error", $"Ocurrió un error al cargar datos: {ex.Message}", "OK");
         }
+    }
 
-        public async Task<ElementoMenu> ObtenerElementoMenuAsync(int id)
+    // Crear un nuevo elemento en el menú
+    public async Task<int> CrearElementoMenu(ElementoMenu elementoMenu)
+    {
+        return await _connection.InsertAsync(elementoMenu);
+    }
+
+    // Obtener un elemento del menú por ID
+    public async Task<ElementoMenu> ObtenerElementoMenuAsync(int id)
+    {
+        return await _connection.Table<ElementoMenu>().Where(u => u.Id == id).FirstAsync();
+    }
+
+    // Obtener elementos del menú pedidos por una mesa
+    public async Task<List<ElementoMenu>> ObtenerElementoMenuFromMesaAsync(int id)
+    {
+        List<Pedido> pedidos = await _connection.Table<Pedido>().Where(u => u.MesaId == id).ToListAsync();
+        var elementos = new List<ElementoMenu>();
+
+        for (int i = 0; i < pedidos.Count; i++)
         {
-            return await _connection.Table<ElementoMenu>().Where(u => u.Id == id).FirstAsync();
+            var pedido = pedidos[i];
+            var elemento = await _connection.Table<ElementoMenu>().Where(u => u.Id == pedido.ElementoMenu).FirstAsync();
+            elementos.Add(elemento);
         }
 
-        public async Task<List<ElementoMenu>> ObtenerElementoMenuFromMesaAsync(int id)
-        {
-            List<Pedido> pedidos = await _connection.Table<Pedido>().Where(u => u.MesaId == id).ToListAsync();
+        return elementos;
+    }
 
-            var elementos = new List<ElementoMenu>();
+    // Obtener todos los elementos del menú
+    public async Task<List<ElementoMenu>> ObtenerElementoMenusAsync()
+    {
+        return await _connection.Table<ElementoMenu>().ToListAsync();
+    }
 
-            for (int i = 0; i < pedidos.Count; i++)
-            {
-                var pedido = pedidos[i];
-                var elemento = await _connection.Table<ElementoMenu>().Where(u => u.Id == pedido.ElementoMenu).FirstAsync();
-                elementos.Add(elemento);
-            }
+    // Borrar un elemento del menú
+    public async Task<int> borrarElementoMenu(ElementoMenu em)
+    {
+        return await _connection.Table<ElementoMenu>().Where(u => u.Id == em.Id).DeleteAsync();
+    }
 
-            return elementos;
-        }
-
-        public async Task<List<ElementoMenu>> ObtenerElementoMenusAsync()
-        {
-            return await _connection.Table<ElementoMenu>().ToListAsync();
-        }
-
-        public async Task<int> borrarElementoMenu(ElementoMenu em)
-        {
-            return await _connection.Table<ElementoMenu>().Where(u => u.Id == em.Id).DeleteAsync();
-        }
-
-        public async Task<int> ActualizarElementoMenu(ElementoMenu editado)
-        {
-            return await _connection.UpdateAsync(editado);
-        }
+    // Actualizar un elemento del menú
+    public async Task<int> ActualizarElementoMenu(ElementoMenu editado)
+    {
+        return await _connection.UpdateAsync(editado);
     }
 }

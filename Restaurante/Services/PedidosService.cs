@@ -1,114 +1,115 @@
 ﻿using Restaurante.Models;
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Restaurante.Services
+namespace Restaurante.Services;
+
+// Servicio para gestionar los pedidos
+class PedidosService
 {
-    class PedidosService
+    private readonly SQLiteAsyncConnection _connection;
+    private static PedidosService? instance;
+
+    // Constructor privado para patrón Singleton
+    private PedidosService(string dbpath)
     {
-        private readonly SQLiteAsyncConnection _connection;
-        private static PedidosService? instance;
+        _connection = new SQLiteAsyncConnection(dbpath);
+        _connection.CreateTableAsync<Pedido>().Wait();
+    }
 
-        private PedidosService(string dbpath)
-        {
-            _connection = new SQLiteAsyncConnection(dbpath);
-            _connection.CreateTableAsync<Pedido>().Wait();
-        }
+    // Obtener instancia del servicio (Singleton)
+    public static PedidosService GetInstance()
+    {
+        string dbpath = Path.Combine(FileSystem.AppDataDirectory, "restaurante.db");
+        return instance ??= new PedidosService(dbpath);
+    }
 
-        public static PedidosService GetInstance()
-        {
-            string dbpath = Path.Combine(FileSystem.AppDataDirectory, "restaurante.db");
-            return instance ??= new PedidosService(dbpath);
-        }
+    // Verifica si hay pedidos en la base de datos
+    public async Task<bool> BaseDeDatosTieneRegistros()
+    {
+        var count = await _connection.Table<Pedido>().CountAsync();
+        return count > 0;
+    }
 
-        public async Task<bool> BaseDeDatosTieneRegistros()
+    // Carga datos de ejemplo si no hay registros
+    public async Task CargarDatos()
+    {
+        try
         {
-            var count = await _connection.Table<Pedido>().CountAsync();
-            return count > 0;
-        }
+            if (await BaseDeDatosTieneRegistros())
+                return;
 
-        public async Task CargarDatos()
-        {
-            try
+            List<Mesa> mesas = await _connection.Table<Mesa>().ToListAsync();
+            List<ElementoMenu> elementos = await _connection.Table<ElementoMenu>().ToListAsync();
+            var pedidosIniciales = new List<Pedido>();
+
+            Random randomMesa = new Random();
+            Random randomElemento = new Random();
+
+            for (int i = 0; i < 10; i++)
             {
-                if (await BaseDeDatosTieneRegistros())
+                Pedido pedido = new Pedido
                 {
-                    return;
-                }
-
-                List<Mesa> mesas = await _connection.Table<Mesa>().ToListAsync();
-                List<ElementoMenu> elementos = await _connection.Table<ElementoMenu>().ToListAsync();
-                var pedidosIniciales = new List<Pedido>();
-
-                Random randomMesa = new Random();
-                Random randomElemento = new Random(); 
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Pedido pedido = new Pedido
-                    {
-                        MesaId = mesas[randomMesa.Next(mesas.Count)].Numero,  
-                        ElementoMenu = elementos[randomElemento.Next(elementos.Count)].Id, 
-                        Cantidad = randomMesa.Next(1, 6)  
-                    };                    
-                    pedidosIniciales.Add(pedido);
-                }
-
-                await _connection.InsertAllAsync(pedidosIniciales);
+                    MesaId = mesas[randomMesa.Next(mesas.Count)].Numero,
+                    ElementoMenu = elementos[randomElemento.Next(elementos.Count)].Id,
+                    Cantidad = randomMesa.Next(1, 6)
+                };
+                pedidosIniciales.Add(pedido);
             }
-            catch (Exception ex)
-            {
-                await Shell.Current.DisplayAlert("Error", $"Ocurrió un error al cargar datos: {ex.Message}", "OK");
-            }
-        }
 
-        public async Task<int> CrearPedido(Pedido nuevoPedido)
+            await _connection.InsertAllAsync(pedidosIniciales);
+        }
+        catch (Exception ex)
         {
-            // Buscar si ya existe un pedido para esa mesa y ese elemento
-            var pedidoExistente = await _connection.Table<Pedido>()
-                .Where(p => p.MesaId == nuevoPedido.MesaId && p.ElementoMenu == nuevoPedido.ElementoMenu)
-                .FirstOrDefaultAsync();
-
-            if (pedidoExistente != null)
-            {
-                // Ya existe → sumamos cantidad y actualizamos
-                pedidoExistente.Cantidad += nuevoPedido.Cantidad;
-                return await _connection.UpdateAsync(pedidoExistente);
-            }
-            else
-            {
-                // No existe → lo insertamos como nuevo
-                return await _connection.InsertAsync(nuevoPedido);
-            }
+            await Shell.Current.DisplayAlert("Error", $"Ocurrió un error al cargar datos: {ex.Message}", "OK");
         }
+    }
 
+    // Crea un nuevo pedido o actualiza uno existente si ya hay uno igual
+    public async Task<int> CrearPedido(Pedido nuevoPedido)
+    {
+        var pedidoExistente = await _connection.Table<Pedido>()
+            .Where(p => p.MesaId == nuevoPedido.MesaId && p.ElementoMenu == nuevoPedido.ElementoMenu)
+            .FirstOrDefaultAsync();
 
-        public async Task<int> ActualizarPedido(Pedido pedido)
+        if (pedidoExistente != null)
         {
-            return await _connection.UpdateAsync(pedido);
+            pedidoExistente.Cantidad += nuevoPedido.Cantidad;
+            return await _connection.UpdateAsync(pedidoExistente);
         }
-
-        public async Task<List<Pedido>> ObtenerPedidosMesaAsync(int mesa)
+        else
         {
-            return await _connection.Table<Pedido>().Where(u => u.MesaId == mesa).ToListAsync();
+            return await _connection.InsertAsync(nuevoPedido);
         }
+    }
 
-        public async Task<List<Pedido>> ObtenerPedidosAsync()
-        {
-            return await _connection.Table<Pedido>().ToListAsync();
-        }
+    // Actualiza un pedido existente
+    public async Task<int> ActualizarPedido(Pedido pedido)
+    {
+        return await _connection.UpdateAsync(pedido);
+    }
 
-        public async Task<int> borrarPedido(Pedido pedido)
-        {
-            int mesaId = pedido.MesaId;
-            int elementoId = pedido.ElementoMenu;
-            return await _connection.Table<Pedido>()
-                .Where(u => u.MesaId == mesaId && u.ElementoMenu == elementoId)
-                .DeleteAsync();
-        }
+    // Obtiene los pedidos de una mesa específica
+    public async Task<List<Pedido>> ObtenerPedidosMesaAsync(int mesa)
+    {
+        return await _connection.Table<Pedido>()
+            .Where(u => u.MesaId == mesa)
+            .ToListAsync();
+    }
+
+    // Obtiene todos los pedidos
+    public async Task<List<Pedido>> ObtenerPedidosAsync()
+    {
+        return await _connection.Table<Pedido>().ToListAsync();
+    }
+
+    // Elimina un pedido por mesa y elemento
+    public async Task<int> borrarPedido(Pedido pedido)
+    {
+        int mesaId = pedido.MesaId;
+        int elementoId = pedido.ElementoMenu;
+
+        return await _connection.Table<Pedido>()
+            .Where(u => u.MesaId == mesaId && u.ElementoMenu == elementoId)
+            .DeleteAsync();
     }
 }

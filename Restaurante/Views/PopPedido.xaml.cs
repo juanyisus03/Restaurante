@@ -7,6 +7,7 @@ using System.ComponentModel;
 
 namespace Restaurante.Views;
 
+// Popup para agregar un pedido a una mesa
 public partial class PopUpPedido : Popup, INotifyPropertyChanged
 {
     private readonly PedidosService _pedidoService;
@@ -14,6 +15,7 @@ public partial class PopUpPedido : Popup, INotifyPropertyChanged
     private readonly Mesa _mesa;
     private readonly PedidosViewModel _viewModel;
 
+    // Lista de elementos del menú disponibles
     public ObservableCollection<ElementoMenu> ElementosMenu { get; set; } = new();
 
     private ElementoMenu _elementoSeleccionado;
@@ -48,9 +50,10 @@ public partial class PopUpPedido : Popup, INotifyPropertyChanged
         _mesa = mesa;
         _viewModel = viewModel;
 
-        _ = CargarElementos();
+        _ = CargarElementos(); // Carga los elementos del menú
     }
 
+    // Método que obtiene los elementos del menú desde el servicio
     private async Task CargarElementos()
     {
         var lista = await _elementoMenuService.ObtenerElementoMenusAsync();
@@ -59,6 +62,7 @@ public partial class PopUpPedido : Popup, INotifyPropertyChanged
             ElementosMenu.Add(item);
     }
 
+    // Acción al presionar "Agregar"
     private async void OnAgregarClicked(object sender, EventArgs e)
     {
         if (ElementoSeleccionado == null || string.IsNullOrWhiteSpace(Cantidad) || !int.TryParse(Cantidad, out int cantidadInt) || cantidadInt <= 0)
@@ -75,17 +79,20 @@ public partial class PopUpPedido : Popup, INotifyPropertyChanged
         };
 
         await _pedidoService.CrearPedido(pedido);
-
         await _viewModel.RecargarPedidos();
         Close();
     }
 
+    // Acción al presionar "Cancelar"
     private void OnCancelarClicked(object sender, EventArgs e)
     {
         Close();
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
-    private void OnPropertyChanged(string propertyName) =>
+
+    // Notifica cambios de propiedades
+    private void OnPropertyChanged(string propertyName) { 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
