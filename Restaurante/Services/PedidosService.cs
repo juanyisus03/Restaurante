@@ -38,23 +38,23 @@ class PedidosService
             if (await BaseDeDatosTieneRegistros())
                 return;
 
-            List<Mesa> mesas = await _connection.Table<Mesa>().ToListAsync();
-            List<ElementoMenu> elementos = await _connection.Table<ElementoMenu>().ToListAsync();
+            //List<Mesa> mesas = await _connection.Table<Mesa>().ToListAsync();
+            //List<ElementoMenu> elementos = await _connection.Table<ElementoMenu>().ToListAsync();
             
 
-            Random randomMesa = new Random();
-            Random randomElemento = new Random();
+            //Random randomMesa = new Random();
+            //Random randomElemento = new Random();
 
-            for (int i = 0; i < 10; i++)
-            {
-                Pedido pedido = new Pedido
-                {
-                    MesaId = mesas[randomMesa.Next(mesas.Count)].Numero,
-                    ElementoMenu = elementos[randomElemento.Next(elementos.Count)].Id,
-                    Cantidad = randomMesa.Next(1, 6)
-                };
-                await CrearPedido(pedido);
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    Pedido pedido = new Pedido
+            //    {
+            //        MesaId = mesas[randomMesa.Next(mesas.Count)].Numero,
+            //        ElementoMenu = elementos[randomElemento.Next(elementos.Count)].Id,
+            //        Cantidad = randomMesa.Next(1, 6)
+            //    };
+            //    await CrearPedido(pedido);
+            //}
 
             
         }

@@ -16,40 +16,43 @@
         <!-- Capa de contenido -->
         <Grid RowDefinitions="Auto, *" Padding="10">
 
-            <VerticalStackLayout Grid.Row="0" Spacing="10">
+            <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="0,10,0,0">
                 <Label Text="{Binding Mesa.Numero, StringFormat='Pedidos de la Mesa #{0}'}"
-                       FontSize="28"
+                       FontSize="22"
                        FontAttributes="Bold"
                        HorizontalOptions="Center"
                        TextColor="Black" />
 
-                <VerticalStackLayout Spacing="10" HorizontalOptions="CenterAndExpand">
-                    <Button Text="Agregar Pedido"
-                            FontSize="17"
-                            CornerRadius="15"
-                            BackgroundColor="MediumSeaGreen"
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                    <Button Text="Agregar"
+                            FontSize="14"
+                            CornerRadius="10"
+                            WidthRequest="100"
+                            BackgroundColor="#169B21"
                             TextColor="White"
-                            Padding="10"
                             Command="{Binding AgregarCommand}" />
 
-                    <Button Text="{Binding TotalTexto}"
-                            FontSize="17"
-                            CornerRadius="15"
-                            BackgroundColor="DarkOrange"
+                    <Button Text="Borrar"
+                            FontSize="14"
+                            CornerRadius="10"
+                            WidthRequest="100"
+                            BackgroundColor="#D52D2D"
                             TextColor="White"
-                            Padding="10"
+                            Command="{Binding BorrarTodosCommand}"
+                            IsEnabled="{Binding PuedePagar}" /> 
+                    
+                    <Button Text="{Binding TotalTexto}" 
+                            FontSize="14"
+                            CornerRadius="10"
+                            WidthRequest="150"
+                            BackgroundColor="#FFB400"
+                            TextColor="White"
                             Command="{Binding PagarCommand}"
                             IsEnabled="{Binding PuedePagar}" />
 
-                    <Button Text="Borrar Pedidos"
-                            FontSize="17"
-                            CornerRadius="15"
-                            BackgroundColor="IndianRed"
-                            TextColor="White"
-                            Padding="10"
-                            Command="{Binding BorrarTodosCommand}"
-                            IsEnabled="{Binding PuedePagar}" />
-                </VerticalStackLayout>
+
+                    
+                </HorizontalStackLayout>
             </VerticalStackLayout>
 
             <!-- Lista de pedidos -->

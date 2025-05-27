@@ -40,7 +40,7 @@
                                    HorizontalOptions="Center">
                 <Button Text="Agregar"
                         Clicked="OnAgregarClicked"
-                        BackgroundColor="Green"
+                        BackgroundColor="#169B21"
                         TextColor="White"
                         CornerRadius="12"
                         Padding="10,5"
@@ -48,8 +48,8 @@
 
                 <Button Text="Cancelar"
                         Clicked="OnCancelarClicked"
-                        BackgroundColor="Red"
-                        TextColor="Black"
+                        BackgroundColor="#D52D2D"
+                        TextColor="White"
                         CornerRadius="12"
                         Padding="10,5"
                         WidthRequest="100" />

@@ -44,24 +44,49 @@
         </AbsoluteLayout>
 
         <HorizontalStackLayout HorizontalOptions="CenterAndExpand">
+            <VerticalStackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Margin="10,0,0,0">
+                
+            <Label Text="Editar Layout:"
+           VerticalOptions="Center"
+                   HorizontalOptions="Center"
+           FontSize="13"
+           TextColor="Black" />
 
-            <Switch IsToggled="{Binding isEditionMode}" x:Name="swEdicion"  />
+            <Switch VerticalOptions="Center" HorizontalOptions="Center" IsToggled="{Binding isEditionMode}" x:Name="swEdicion" />
+            </VerticalStackLayout>
+
             <CollectionView x:Name="pickerMesas"
                 HorizontalOptions="Center"
                 ItemsSource="{Binding OpcionesMesa}"
                 SelectionMode="{Binding selectionMode, Mode=TwoWay}"
                 IsEnabled="{Binding isEditionMode}"
                 ItemsLayout="HorizontalList"
-                SelectedItem="{Binding OpcionSeleccionada, Mode=TwoWay}">
+                SelectedItem="{Binding OpcionSeleccionada, Mode=TwoWay}"
+                Margin="10,0,10,0"
+                HeightRequest="100">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <StackLayout Padding="5" HorizontalOptions="Center" HeightRequest="80" WidthRequest="80">
-                            <Image Source="{Binding Imagen}" HeightRequest="50"/>
-                            <Label Text="{Binding Nombre}" FontSize="12" HorizontalOptions="Center"/>
+                        <StackLayout Padding="5"
+                         WidthRequest="70"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center">
+                            <Image Source="{Binding Imagen}"
+                       HeightRequest="40"
+                       WidthRequest="40"
+                       HorizontalOptions="Center" />
+                            <Label Text="{Binding Nombre}"
+                       FontSize="11"
+                       HorizontalOptions="Center"
+                       TextColor="#444" />
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+
+                
             </CollectionView>
+
+
         </HorizontalStackLayout>
+
     </VerticalStackLayout>
 </ContentPage>

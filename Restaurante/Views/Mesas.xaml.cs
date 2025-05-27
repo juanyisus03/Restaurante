@@ -72,7 +72,7 @@ public partial class Mesas : ContentPage
 
         bool noMostrarMas = await Application.Current.MainPage.DisplayAlert(
             "Bienvenido",
-            "Aquí puedes gestionar todas las mesas del restaurante.\n \u25CF Haz click en el boton para activar modo edición y gestionar el layout de mesas. \n\n\n \u25CF Toca una celda con mesa sin el modo edicion para empezar a asignarle pedidos a la mesa.",
+            "Aquí puedes gestionar todas las mesas del restaurante.\n \u25CF Haz click en el boton para activar modo edición y gestionar el layout de mesas. \n\n \u25CF Toca una celda con mesa sin el modo edicion para empezar a asignarle pedidos a la mesa.",
             "No volver a mostrar",
             "OK"
         );

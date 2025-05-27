@@ -70,8 +70,12 @@ public class PedidosViewModel : INotifyPropertyChanged
 
     private async Task BorrarTodosPedidoMesa()
     {
-        await _pedidoService.BorrarPedidosMesaAsync(Mesa.Numero);
-        await CargarDatos();      
+        bool borrar = await Application.Current.MainPage.DisplayAlert("¿Seguro desea Borrar?", "¿Se ha asegurado de pagar antes el Pedido?", "Si", "No");
+        if (borrar == true)
+        {
+            await _pedidoService.BorrarPedidosMesaAsync(Mesa.Numero);
+            await CargarDatos();
+        }
     }
 
     // Genera y guarda un ticket en PDF
