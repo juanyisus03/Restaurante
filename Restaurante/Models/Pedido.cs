@@ -5,9 +5,8 @@ namespace Restaurante.Models
     public class Pedido
     {
         [PrimaryKey]
+        public int Id { get; set; }
         public int MesaId { get; set; }
-
-        [PrimaryKey]
         public int ElementoMenu { get; set; }
 
         public int Cantidad { get; set; }

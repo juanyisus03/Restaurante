@@ -14,6 +14,7 @@ class ElementoMenuService
     {
         _connection = new SQLiteAsyncConnection(dbpath);
         _connection.CreateTableAsync<ElementoMenu>().Wait();
+        CargarDatos();
     }
 
     // Obtener instancia del servicio (Singleton)

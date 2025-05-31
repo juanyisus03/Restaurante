@@ -40,13 +40,16 @@ namespace Restaurante.ViewModels
             set
             {
                 _elementoSeleccionado = value;
-                MostrarPopupEditar(value);
+                
                 OnPropertyChanged(nameof(ElementoSeleccionado));
             }
         }
 
+
+
         // Comandos de agregar y eliminar
         public ICommand AgregarCommand { get; }
+        public ICommand MostrarModalCommand { get; }
         public ICommand EliminarCommand { get; }
 
         // Constructor
@@ -56,7 +59,7 @@ namespace Restaurante.ViewModels
 
             AgregarCommand = new Command(async () => await AgregarElemento());
             EliminarCommand = new Command(async () => await EliminarElemento());
-
+            MostrarModalCommand = new Command(async () => await MostrarPopupEditar(ElementoSeleccionado));
             Elementos = new ObservableCollection<ElementoMenu>();
             InicializarDatos();
         }
